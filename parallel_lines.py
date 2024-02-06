@@ -7,7 +7,7 @@ def parallel(line1, line2):
     if (x2 - x1) != 0:
         slope1 = (y2 - y1) / (x2 - x1) 
     else: 
-        slope1 = float('inf')
+        slope1 = float('inf') 
 
     x1, y1, x2, y2 = line2[0]
     if (x2 - x1) != 0:
