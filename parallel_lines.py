@@ -7,7 +7,7 @@ def parallel(line1, line2):
     if (x2 - x1) != 0:
         slope1 = (y2 - y1) / (x2 - x1) 
     else: 
-        slope1 = float('inf') 
+        slope1 = float('inf')
 
     x1, y1, x2, y2 = line2[0]
     if (x2 - x1) != 0:
@@ -15,13 +15,12 @@ def parallel(line1, line2):
     else:
         slope2 = float('inf')
 
-    return slope1 == slope2 
+    return (abs(slope1 - slope2) < 0.5 or slope1 == slope2) and (abs(slope1) > 5 and abs(slope2) > 5)
 
 #Draw line on image
 def drawLine(line):
     x1, y1, x2, y2 = line[0]
     cv2.line(final, (x1, y1), (x2, y2), (0, 0, 255), 5)
-
 
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
@@ -41,8 +40,12 @@ while(cap.isOpened()):
 
     # Use Canny edge detector to find edges in the image
     edges = cv2.Canny(gray, 50, 150, None, 3)
+    cv2.imshow("edges", edges)
 
-    final = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+    kernel = np.ones((10, 10), np.uint8)
+    erode = cv2.erode(edges, kernel)
+
+    final = cv2.cvtColor(erode, cv2.COLOR_GRAY2BGR) 
 
     # Use Hough Line Transform to detect lines in the image
     rho = 1  # distance resolution in pixels of the Hough grid
@@ -59,7 +62,6 @@ while(cap.isOpened()):
             for j in range(i + 1, len(lines)):
                 if parallel(lines[i], lines[j]):
                     drawLine(lines[i])
-                    drawLine(lines[j])
 
     cv2.imshow('Frame',frame)
     cv2.imshow("Detected Lines (in red) - Standard Hough Line Transform", final)
@@ -77,4 +79,4 @@ while(cap.isOpened()):
 cap.release()
  
 # Closes all the frames
-cv2.destroyAllWindows()
+cv2.destroyAllWindows() 
