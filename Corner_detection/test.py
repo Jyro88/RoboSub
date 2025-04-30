@@ -18,13 +18,18 @@ def parallel(line1, line2):
     return (abs(slope1 - slope2) < 0.2 or slope1 == slope2) and (abs(slope1) > 5 and abs(slope2) > 5)
 
 
-# Draw rectangle on image
 def drawRectangle(line1, line2, frame_width, frame_height):
     x1, y1, x2, y2 = line1[0]
     x3, y3, x4, y4 = line2[0]
 
-    # Check if vertical lines are longer than horizontal lines
-    if abs(y1 - y2) > abs(x1 - x2) and abs(y3 - y4) > abs(x3 - x4):
+    # Define a small threshold for point comparison
+    threshold = 5
+
+    # Check if the lines form a closed shape within the threshold
+    if (
+        abs(x1 - x4) < threshold and abs(y1 - y4) < threshold and
+        abs(x2 - x3) < threshold and abs(y2 - y3) < threshold
+    ):
         # Check if lines are not close to the edges of the frame
         if (
             0.1 * frame_width < x1 < 0.9 * frame_width and
@@ -44,6 +49,8 @@ def drawRectangle(line1, line2, frame_width, frame_height):
             cv2.line(final, (x2, y2), (x4, y4), (0, 0, 255), 5)
 
             drawn_lines.add(tuple(line1[0]))  # Add the drawn lines to a set
+
+
 
 # Create a VideoCapture object and read from the input file
 # If the input is the camera, pass 0 instead of the video file name
